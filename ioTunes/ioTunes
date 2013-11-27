@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+
+# m4a2mp3 - bash script to convert iTunes library m4a to mp3
+# ----------------------------------------------------------
+# Based on http://code.ecomerc.com/Articles/iTunesConvert/ for synology shared disks
+# Modified Aug. 10, 2013 by Joseph Edwards VIII (joseph8th@notroot.us) for general use
+
+#the iTunes dir is located out of the music shared folder
+iTunesdir="$1"
+inputdir="${iTunesdir}/iTunes Music/Music"
+iTuneslib="${iTunesdir}/iTunes Music Library.xml"
+#inputdir="/volume2/media/iTunes/iTunes Media/Music"
+#iTunesdir="/volume2/media/iTunes/"
+
+oTunesdir="${2}/oTunes"
+linkdir="${oTunesdir}/Playlists"
+outputdir="${oTunesdir}/Music"
+#outputdir="/volume2/music/iLibrary"
+#linkdir="/volume2/media/playlists/iPod"
+
+#When done testing set it to /dev/null
+#logfile="/volume1/@scripts/log/iTunes.log"
+
+#Remove all "playlist" links
+if [[ -d $linkdir ]]; then
+    rm $linkdir/* 
+else
+    mkdir -p $linkdir
+fi
+
+if [[ ! -d $outputdir ]]; then
+    mkdir -p $outputdir
+fi
+
+    
+export IFS=$'\n'
+
+playlist=$(cat $iTuneslib | grep -o iTunes%20Media.*\.m4a)
+
+playlist=$(printf $(echo -n $playlist | sed 's/\\/\\\\/g;s/\(%\)\([0-9a-fA-F][0-9a-fA-F]\)/\\x\2/g'))
+
+
+for i in $(find $inputdir -name "*.m4a" -type f)
+do
+    inputpath=${i#$inputdir}
+    filename=$(basename $i)
+    
+    
+    info=$(faad -i "$i" 2>&1)
+    
+    
+    trackcount=$(echo "$info" | grep -c 'track:')
+    
+    if [ $trackcount -eq 1 ] ; then
+        
+        info=$(echo "$info" | sed -e /^iTunNORM:.*$/d)
+        info=$(echo "$info" | sed -e /^iTunSMPB:.*$/d)
+        
+        startline=$(echo "$info" | grep -m 1 -n 'title:\|unknown:'  | cut -f1 -d:)
+        trackline=$(echo "$info" | grep -m 1 -n 'track:'  | cut -f1 -d:)
+        
+        linecount=$(( $trackline - $startline ))
+                
+        dateline=$( echo "$info" | grep -m 1 -n 'unknown: [0-9][0-9][0-9][0-9]'  | cut -f1 -d:)
+        info=$(echo "$info" | sed -e "${dateline}s/unknown: /date: /")
+        
+        remixline=$(echo "$info" | sed -e "1,${trackline}d" | grep -m 1 -n 'unknown:' | cut -f1 -d:)
+        if [ "$remixline" != "" ] ; then
+            remixline=$(( $trackline + $remixline ))
+            info=$(echo "$info" | sed -e "${remixline}s/unknown: /remix: /")
+        fi
+        
+        line=$(( $startline ))
+        info=$(echo "$info" | sed -e "${line}s/unknown: /title: /")
+        
+        
+        line=$(( $line + 1 ))
+        info=$(echo "$info" | sed -e "${line}s/unknown: /artist: /")
+        
+        
+        
+        if [ $linecount -eq 3 ] ; then
+            line=$(( $line + 1 ))
+            info=$(echo "$info" | sed -e "${line}s/unknown: /album: /")
+        fi
+        
+        if [ $linecount -gt 4 ] ; then
+            line=$(( $line + 1 ))
+            info=$(echo "$info" | sed -e "${line}s/unknown: /albumartist: /")
+        fi
+        if [ $linecount -gt 5 ] ; then
+            line=$(( $line + 1 ))
+            info=$(echo "$info" | sed -e "${line}s/unknown: /composer: /")
+        fi
+        
+        if [ $linecount -gt 3 ] ; then
+            line=$(( $line + 1 ))
+            info=$(echo "$info" | sed -e "${line}s/unknown: /album: /")
+            line=$(( $line + 1 ))
+            info=$(echo "$info" | sed -e "${line}s/unknown: /genre: /")
+        fi
+        
+               
+        
+        song=$(echo "$info" | grep ^title: | sed s/title:\ //g)
+        artist=`echo "$info" | grep ^artist: | sed s/artist:\ //g`
+        composer=$(echo "$info" | grep ^composer: | sed s/composer:\ //g)
+        albumartist=`echo "$info" | grep ^albumartist: | sed s/albumartist:\ //g`
+        album=`echo "$info" | grep ^album: | sed s/album:\ //g`
+        genre=$(echo "$info" | grep ^genre: | sed s/genre:\ //g)
+        track=`echo "$info" | grep ^track: | sed s/track:\ //g`
+        year=`echo "$info" | grep ^date: | sed s/date:\ //g`
+        remix=`echo "$info" | grep ^remix: | sed s/remix:\ //g`
+        
+        
+        #Sometimes iTunes adds the remix information to the song title
+        # and sometimes not, so lets check and add if it is not there
+        if [ "$remix" != "" ]
+        then
+            if [ "${song%$remix}" == "$song" ]
+            then
+                song="$song $remix" 
+            fi
+        fi
+        
+        # The iTunes genres are not the same as MP3 genres, and they are 
+        # not consistent either
+        # There is not such MP3 genre as Hip-Hop/Rap or Hip Hop/Rap
+        # but there is both Hip-Hop, and Rap - so choose your favorite
+        # notice that if we do not check and then use $genre as a folder, 
+        # we would have unexpected subdirs
+        genreorg=$genre
+        case "$genre" in
+            "Hip-Hop/Rap")
+                genre="Hip-Hop"
+                ;;
+            "Hip Hop/Rap")
+                genre="Hip-Hop"
+                ;;
+            "R&B/Soul")
+                genre="R&B"
+                ;;
+            "Singer/Songwriter")
+                genre="Pop"
+                ;;
+            "Indie Rock")
+                genre="Indie"
+                ;;
+            "Pop/Rock")
+                genre="Rock"
+                ;;
+             
+            #*)  
+        esac
+
+
+        
+        # Make sure the genre does not contain illegal characters (especially / or \
+        gpath=${genre//[^a-zA-Z0-9-&]/ }
+        
+        #Order the output after genre (or what every you want here)
+        # feel free to go nuts with the tags identified above
+        # below I use iTunes folder arrangement, but add genre
+        # so it is actually: genre/artist/album/tracknumber - song.mp3
+        
+        outputfile=$outputdir/$gpath${inputpath%.m4a}.mp3
+        
+        #I want the link name only to be the artist and the song 
+        # (when transfered to a usb stick and used in lesser than capable 
+        #  mp3 players you still have the most important information)
+        
+        linkname="$artist - $song"
+        
+        #Strip illegal characters from the filename (needed if files are to be used
+        # in Windows, and makes sure random new dirs is not created
+        
+        linkname=$(echo $linkname | sed 's/[]['"'"':;*?<>|"[:cntrl:]\\\/]//g')
+        linkfile=$linkdir/$linkname.mp3
+           
+        
+        if [ ! -e "$outputfile" ]
+        then
+            printf "\n\e[33m==> Converting: %s\n" $filename
+            echo -n -e "\033[0m"
+                
+            mkdir -p ${outputfile%/*}
+            #--ignore-tag-errors --tv "TXXX=ALBUM ARTIST=String1"
+            # --tv "TCOM=$composer"
+
+            # transcode each song in background process
+            (faad -q -o - "$i" | lame -h -b 128 - "$outputfile" --tt "$song" --ty "$year" --tn "$track" --ta "$artist" --tg "$genre" --tl "$album" --ignore-tag-errors --tv "TPE2=$albumartist" --tv "TCOM=$composer" ); rc=$?
+
+            if [ $rc -eq 0 ]; then
+                printf "\e[32m==> Conversion complete.\n"
+            else
+                printf "\e[31m==> Conversion failed.\n"
+            fi
+            echo -n -e "\033[0m"
+
+        fi
+
+
+        #Used as an additional check, to set mp3 tags for previously converted m4a files or to add tags that lame does not add correctly (is not needed anymore since lame supports --tv
+        
+        #if [ -e "$outputfile" ]
+        #then
+        #    echo Editing: $outputfile 
+        #    mp3info -t "$song" -a "$artist" -l "$album" -n "$track" -g "$genre" $outputfile 
+        #fi
+        
+        
+        res=`echo $playlist | grep -i -F "$filename"`; 
+        if [[ ${#res} > 0 ]]; then
+            #This file is part of the playlist, so add it to the playlist directory
+            ln -s "$outputfile" "$linkfile"
+        fi 
+        
+    fi
+done
+
+chmod -R 777 "$outputdir"
