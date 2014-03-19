@@ -18,15 +18,16 @@ IFS=$'\n'
 fileAry=($(find $DIR -name "$2"))
 IFS=$OLDIFS
 
-echo "FOUND by NAME ..."; echo
-
 fLen=${#fileAry[@]}
+echo "FOUND $fLen files by NAME ..."; echo
+[[ "$fLen" == "0" ]] && exit
+
 for (( i=0; i<${fLen}; i++ ));
 do
     echo "${fileAry[$i]}"
 done
 
-echo; read -p "Are you sure you want to PERMANENTLY DELETE these files? [y/N]: " choice
+echo; read -p "Do you want to PERMANENTLY DELETE these (${fLen}) files? [y/N]: " choice
 while true
 do
     case $choice in
