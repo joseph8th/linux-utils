@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+# shalarm - Shell Alarm Clock
+# Joseph Edwards (joseph8th@urcomics.com)
+# A 'cheap' alarm clock using system alert bell.
+
+print_help() {
+    printf "usage: %s [-h] [-r] HH MM\n\n" "$(basename $0)"
+    printf "\tHH\thour to set alarm (24 hour clock)\n"
+    printf "\tMM\tminutes to set alarm\n" 
+    printf "options:\n\t-h\tprint this message and exit\n"
+    printf "\t-r\tinterpret input in relative time\n"
+    printf "\n* SIGTERM to cancel\n  any key to stop alarm"
+    exit 1
+}
+
+gethour() {
+    date '+%H'
+}
+
+getmin() {
+    date '+%M'
+}
+
+getsec() {
+    date '+%S'
+}
+
+setalarmoff() {
+    while true; do
+        printf '\a'
+        sleep 3
+    done
+}
+
+### 'main' function ###
+
+if [ "$1" == "-h" ]; then
+    print_help
+fi
+
+if [ "$1" == "-r" ]; then
+    isrel=1
+    shift
+else
+    isrel=0
+fi
+
+if [ "$#" -ne "2" ]; then
+    print_help
+fi
+
+HOUR=$1
+MIN=$2
+let "ALM=$HOUR*3600 + $MIN*60"
+let "DAY=24*3600"
+
+if [ "$isrel" == "1" ]; then
+    let "waitsecs=$ALM"
+else
+    let "now=($(gethour)*60 + $(getmin))*60 + $(getsec)"
+    let "waitsecs=(($DAY - $now) + $ALM) % $DAY"
+fi
+
+if (( waitsecs < 0 )); then
+    echo "You cannot set off an alarm in the past!"
+    exit 1
+fi
+
+let "alm_h=($waitsecs/3600)%24"
+let "alm_m=($waitsecs/60)%60"
+let "alm_s=($waitsecs)%60"
+
+printf "Alarm in: %02d:%02d:%02d " "$alm_h" "$alm_m" "$alm_s"
+printf " (%d secs from now)\n" "$waitsecs"
+
+# got waitsecs OK? then sleep...
+sleep $waitsecs
+
+if [ "$?" == "0" ]; then
+    setalarmoff&
+    read -n 1 -s
+    kill $!
+fi
