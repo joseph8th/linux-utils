@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function _print_help {
-    echo 'Usage: find_rm DIRECTORY "NAME"'; exit 1
+    echo 'Usage: find_rm.sh DIRECTORY "NAME"'; exit 1
 }
 
 [[ "$#" < "2" ]] && _print_help

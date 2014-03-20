@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function _print_help {
-    echo 'Usage: sort_ext SRC DEST'; exit 1
+    echo 'Usage: sort_ext.sh SRC DEST'; exit 1
 }
 
 
