@@ -10,12 +10,12 @@ if [[ ! -e "$1" ]]; then
     echo "==> ERROR: '${$1}' not found."; exit 1
 fi
 
-DIR=$1
+DIR="$1"
 NAME=$2
 
 OLDIFS=$IFS
 IFS=$'\n'
-fileAry=($(find $DIR -name "$2"))
+fileAry=($(find "$DIR" -name "$2"))
 IFS=$OLDIFS
 
 fLen=${#fileAry[@]}

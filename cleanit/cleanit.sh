@@ -14,20 +14,20 @@ function _clean_testdisk {
     junkAry=( "*:*" "Thumbs.db" "Desktop.ini" )
 
     for junk in $junkAry; do
-	exec ./find_rm.sh $1 $junk
+	exec ./find_rm.sh "$1" "$junk"
     done
 }
 
 
 #### MAIN section ####
 
-DIR=$PWD
+DIR="$PWD"
 flags=""
 
 while getopts ":d:tph" opt; do
     case "$opt" in
 	d)
-	    DIR=$OPTARG
+	    DIR="$OPTARG"
 	    if [[ ! -e "$DIR" ]]; then
 		echo "==> ERROR: '${DIR}' not found." >&2; exit 1
 	    fi
@@ -52,7 +52,7 @@ for flag in $flags; do
     case $flag in
 	t)
 	    echo "Attempting to clean up 'testdisk' files ..."
-	    _clean_testdisk $DIR
+	    _clean_testdisk "$DIR"
 	    ;;
 	p)
 	    echo "Attempting to clean up 'photorec' files ..."
