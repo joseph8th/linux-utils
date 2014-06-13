@@ -1,0 +1,17 @@
+LCARS\GX\0.03\DE/WM\theme
+
+Trekkie Linux GTK+ theme for Xfce or GNOME 2.x, optimized to Linux Mint Debian Edition (LMDE). Based on the LCARS-GTK and LCARS-Desktop GNOME theme projects widely available on the webs. 
+
+CHANGE LOG:
+
+* 0.00  - My personal Mint 11 theme tweaking LCARS-GTK and LCARS-Desktop.
+* 0.01g - Mere aggregation of installable files, folders, settings, and sources to be installed on a new LMDE installation (GNOME origs).
+* 0.01x - install.sh: Install backdrop and tweaked LCARS-GTK ('bg' and 'gtk' options).
+* 0.02x - install.sh: Hijack Mint login screen default_background.jpg symlink.
+* 0.03x - install.sh: Install conkyrc's and conky_delay_start; activate conky.
+* 0.03 - install.sh: Install LCARS-Desktop ('gnome' option).
+
+AUTHOR:
+
+	Joseph Edwards VIII <coriolisjoh@msn.com>
+	git@github.com/joseph8th/lcars_gx.git

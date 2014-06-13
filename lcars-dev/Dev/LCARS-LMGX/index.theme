@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=index.theme.foo
+Name[en_CA]=index.theme.foo
+
+[X-GNOME-Metatheme]
+Name=LCARS-Desktop
+Type=X-GNOME-Metatheme
+Comment=Star Trek styled desktop theme
+Encoding=UTF-8
+GtkTheme=LCARS-GTK
+MetacityTheme=LCARS-Desktop
+IconTheme=Tango
