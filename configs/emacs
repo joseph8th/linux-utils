@@ -96,8 +96,8 @@
 (winner-mode 1)
 
 ;;; PHP mode
-  (autoload 'php-mode "php-mode.el" "Php mode." t)
-  (setq auto-mode-alist (append '(("/*.\.php[345]?$" . php-mode)) auto-mode-alist))
+;;  (autoload 'php-mode "php-mode.el" "Php mode." t)
+;;  (setq auto-mode-alist (append '(("/*.\.php[345]?$" . php-mode)) auto-mode-alist))
 
 ;;; LaTeX support
 ;;;(load "auctex.el" nil t t)
@@ -126,10 +126,27 @@
 ;;--------------------------------------------------------------------
 
 ;;--------------------------------------------------------------------
-;; Lines loading and enabling cython-mode
-
-(setq load-path (cons "~/.config/emacs" load-path))
-(require 'cython-mode)
-
 ;; Word wrap on vertical split
 (setq truncate-partial-width-windows nil)
+
+;; 256 colors maybe?
+;; (setq load-path (cons "/home/notroot/.config/emacs/term" load-path))
+
+;; Set load-path for my *.el files
+(setq load-path (cons "/home/notroot/.config/emacs" load-path))
+
+;; Cython mode 
+(require 'cython-mode)
+
+;; web-mode for HTML with embedded code
+(require 'web-mode)
+
+;; Go mode
+(require 'go-mode)
+
+;; php-mode-improved PHP mode
+;; (require 'php-mode)
+(setq load-path (cons "/home/notroot/.config/emacs" load-path))
+(autoload 'php-mode "php-mode-improved" "Major mode for editing php code." t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
