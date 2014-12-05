@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# homebrat.sh -- script to git $HOME config
+
+# default settings for Joseph8th $HOME ... change to suit
+GIT_REMOTE="https://github.com/joseph8th/home"
+GIT_LOCAL="${HOME}/.config/homebrat"
+
+# relative to $HOME
+GIT_FILES=( ".bashrc" )
+GIT_DIRS=( ".emacs.d" )
