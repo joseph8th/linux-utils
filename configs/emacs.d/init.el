@@ -99,6 +99,7 @@
   (aset buffer-display-table ?\^M []))
 
 (add-hook 'text-mode-hook 'remove-dos-eol)
+
 ; ------------------------------------------------------------------------
 ; Dave's .emacs (Joseph8th's prof)
 ; UNM version, hacked down for student distribution
@@ -107,6 +108,7 @@
 
 ; Suppresses the menu-bar (I'd rather have the extra line to work with)
 ;  Comment out (place a ';' at the beginning of) the next line to keep the menu bar
+
 ;(menu-bar-mode -1)                          ; I *never* use the stupid thing..
 
 ; Show the time in the mode line
@@ -141,6 +143,7 @@
 
 ; Plausible suggestions for code from the ACE folks
 ;(setq-default indent-tabs-mode nil)
+
 (setq-default nuke-trailing-whitespace-p t)
 
 ;;; Global key bindings
@@ -203,6 +206,13 @@
    helm
    helm-projectile
    fill-column-indicator
+   yasnippet
+   python
+   python-mode
+   ipython
+   pyenv-mode
+   python-django
+   django-mode
 ))
 
 ;; Package manager and packages handler
@@ -369,6 +379,10 @@ by using nxml's indentation rules."
 ;; ====================================================================
 ;; Other package configs
 
+;; Yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+
 ;; Highlight-symbol
 (require 'highlight-symbol)
 (global-set-key [(control f3)] 'highlight-symbol-at-point)
@@ -407,6 +421,10 @@ by using nxml's indentation rules."
 
 ;;--------------------------------------------------------------------
 ;; Org-Mode stuff
+
+(add-to-list 'load-path "~/elisp/org-mode/lisp")
+(add-to-list 'load-path "~/elisp/org-mode/contrib/lisp" t)
+(require 'org)
 
 ;; active Babel languages
 (org-babel-do-load-languages

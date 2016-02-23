@@ -1,0 +1,94 @@
+..
+..
+cat application/logs/matrix_2014-12-19.log 
+tail -f application/logs/matrix_2014-12-19.log 
+cat application/logs/matrix_2014-12-19.log 
+cat application/logs/matrix_2014-12-19.log 
+..
+..
+tail -f application/logs/matrix_2015-01-05.log
+cat application/logs/matrix_2015-01-05.log
+tail -f application/logs/matrix_2015-01-05.log
+ls
+mkdir lisp
+mv *.el* lisp
+ls
+mv lisp/init.el* .
+ls
+mv ac-* lisp/
+mv lisp/ac-* .
+ls
+ls
+ls
+py -3.4 setup.py py2exe
+cd c:/Users/jedwards.CINEMAEQUIP/Dev/skyfall
+ls
+ls dist
+rm -r main.dist
+rm -r main.spec
+rm -r main.build
+ls
+py -3.4 setup.py py2exe
+py -3.4 -m pip install pyreadline
+rm CHANGELOG.md
+py -3.4 -m pip install pysendfile
+py -3.4 -m pip install simplejson
+py -3.4 setup.py py2exe
+py -3.4 -m pip install urllib
+ls
+cd dist/
+ls
+ls config/
+./main.exe 
+cd c:/Users/jedwards.CINEMAEQUIP/Dev/skyfall
+ls
+cd dist/
+main.exe
+./main.exe
+cd ..
+py -3.4 main.py 
+py -3.4 main.py py -3.4 main.py 
+ls
+cd ../elevate/
+ls
+./elevate.py
+chmod a+x elevate.py
+elevate.py
+py -3.4 elevate.py
+py -2.7 elevate.py
+ls
+py -3.4 setup-cx.py build
+cd build/exe.win-amd64-3.4/
+ls
+./main.exe 
+cd c:/Users/jedwards.CINEMAEQUIP/Dev/skyfall/
+ls
+./build-windows.bat 
+ls build/skyfall-windows/
+cd build/skyfall-windows/
+./systray.exe
+cd ../..
+./build-windows.bat all
+cd build/skyfall-windows/
+dir
+ls
+./nssm.exe remove skyfall
+cd ../..
+./build-windows.bat all
+./build-windows.bat all
+./build-windows.bat all
+./build-windows.bat all
+./build-windows.bat all
+./build-windows.bat all
+python
+cd c:/Users/jedwards.CINEMAEQUIP/Dev/skyfall
+ls
+mv pkg/scripts/setup.py ./setup_winupdater.py
+ls config/
+ls log/
+egrep PROGRAMFILES
+egrep PROGRAMFILES *
+egrep -R PROGRAMFILES *
+egrep -r PROGRAMFILES .
+egrep PROGRAMFILES .
+egrep PROGRAMFILES */*
